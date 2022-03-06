@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    restart: always
+   
+
+  node:
+    image: node
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    volumes:
+      - $PWD:/home/app
+      - $HOME/.ssh:/home/.ssh
+    working_dir: '/home/app'
+    user: node
+    depends_on:
+      - db
+    tty: true
+
+
+volumes:
+  db:
+  node:
