@@ -27,16 +27,24 @@ These are the notes from a meeting with the frontend developer that describe wha
 - price
 - [OPTIONAL] category
 
+Table: products (id:varchar, name:varchar, price:number, category: varchar)
+
 #### User
 - id
 - firstName
 - lastName
 - password
 
-#### Orders
+Table: users (id:varchar, first_name:varchar, last_name:varchar, password_digest:varchar)
+
+#### Order
 - id
 - id of each product in the order
 - quantity of each product in the order
 - user_id
 - status of order (active or complete)
 
+Table: orders (id:varchar, status:varchar, user_id:number[foreign key to users table])
+
+
+Table: order_products (id:varchar, quantity:number, order_id:number[foreign key to orders table], product_id:number[foreign key to products table])
