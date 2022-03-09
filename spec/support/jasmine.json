@@ -4,7 +4,7 @@
     "../**/tests/*[s]pec.ts"
   ],
   "helpers": [
-    "helpers/**/*.js"
+    "../**/tests/helpers/**/*.ts"
   ],
   "reporters": [
     {
@@ -15,5 +15,5 @@
     }
   ],
   "stopSpecOnExpectationFailure": false,
-  "random": true
+  "random": false
 }
