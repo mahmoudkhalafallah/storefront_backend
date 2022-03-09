@@ -4,9 +4,9 @@ import bcrypt from 'bcrypt'
 //@TODO add tests
 
 export type User = {
-  id: number
-  firstName: string
-  lastName: string
+  id?: number
+  first_name: string
+  last_name: string
   password: string
 }
 
@@ -16,11 +16,10 @@ export class UserStore {
     try {
       const conn = await Client.connect()
       const result = await conn.query(sql)
-      const users = result.rows[0]
 
       conn.release()
 
-      return users
+      return result.rows
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
@@ -32,11 +31,9 @@ export class UserStore {
       const conn = await Client.connect()
       const result = await conn.query(sql, [id])
 
-      const user = result.rows[0]
-
       conn.release()
 
-      return user
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
@@ -48,18 +45,16 @@ export class UserStore {
 
     try {
       const sql =
-        'INSERT INTO users (name, price, category) VALUES($1, $2, $3) RETURNING *'
+        'INSERT INTO users (first_name, last_name, password) VALUES($1, $2, $3) RETURNING *'
       const conn = await Client.connect()
 
       const hash = bcrypt.hashSync(u.password + pepper, parseInt(saltRounds))
 
-      const result = await conn.query(sql, [u.firstName, u.lastName, hash])
-
-      const user = result.rows[0]
+      const result = await conn.query(sql, [u.first_name, u.last_name, hash])
 
       conn.release()
 
-      return user
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }

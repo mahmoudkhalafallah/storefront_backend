@@ -1,12 +1,9 @@
 import Client from '../database'
 
-//@TODO add tests
-
 export type Order = {
-  id: number
-  name: string
-  price: number
-  category?: string
+  id?: number
+  user_id: string | number
+  status: 'active' | 'completed'
 }
 
 export class OrderStore {
@@ -16,11 +13,9 @@ export class OrderStore {
       const conn = await Client.connect()
       const result = await conn.query(sql)
 
-      const orders = result.rows[0]
-
       conn.release()
 
-      return orders
+      return result.rows
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
@@ -32,46 +27,41 @@ export class OrderStore {
       const conn = await Client.connect()
       const result = await conn.query(sql, [id])
 
-      const order = result.rows[0]
-
       conn.release()
 
-      return order
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
   }
 
-  create = async (p: Order): Promise<Order> => {
+  create = async (o: Order): Promise<Order> => {
     try {
       const sql =
-        'INSERT INTO orders (name, price, category) VALUES($1, $2, $3) RETURNING *'
+        'INSERT INTO orders (status, user_id) VALUES($1, $2) RETURNING *'
       const conn = await Client.connect()
 
-      const result = await conn.query(sql, [p.name, p.price, p.category])
-
-      const order = result.rows[0]
+      const result = await conn.query(sql, [o.status, o.user_id])
 
       conn.release()
 
-      return order
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
   }
 
-  currentOrder = async (userId: string): Promise<Order> => {
+  // Get current Order for a user
+  currentOrderByUserId = async (userId: string): Promise<Order> => {
     try {
       const sql = 'SELECT * FROM orders WHERE status=active AND id=($1)'
       const conn = await Client.connect()
 
       const result = await conn.query(sql, [userId])
 
-      const order = result.rows[0]
-
       conn.release()
 
-      return order
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }

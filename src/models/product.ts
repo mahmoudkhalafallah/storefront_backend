@@ -3,7 +3,7 @@ import Client from '../database'
 //@TODO add tests
 
 export type Product = {
-  id: number
+  id?: number
   name: string
   price: number
   category?: string
@@ -11,32 +11,28 @@ export type Product = {
 
 export class ProductStore {
   index = async (): Promise<Product[]> => {
-    const sql = 'SELECT * FROM products;'
+    const sql = 'SELECT * FROM products'
     try {
       const conn = await Client.connect()
       const result = await conn.query(sql)
 
-      const products = result.rows[0]
-
       conn.release()
 
-      return products
+      return result.rows
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
   }
 
-  show = async (id: string): Promise<Product[]> => {
+  show = async (id: number): Promise<Product[]> => {
     const sql = 'SELECT * FROM products WHERE id=($1)'
     try {
       const conn = await Client.connect()
       const result = await conn.query(sql, [id])
 
-      const product = result.rows[0]
-
       conn.release()
 
-      return product
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
@@ -50,11 +46,9 @@ export class ProductStore {
 
       const result = await conn.query(sql, [p.name, p.price, p.category])
 
-      const product = result.rows[0]
-
       conn.release()
 
-      return product
+      return result.rows[0]
     } catch (err) {
       throw new Error('Query failed! Error: ' + err)
     }
