@@ -21,7 +21,7 @@ export class OrderStore {
     }
   }
 
-  show = async (id: string): Promise<Order[]> => {
+  show = async (id: string): Promise<Order> => {
     const sql = 'SELECT * FROM orders WHERE id=($1)'
     try {
       const conn = await Client.connect()
@@ -54,7 +54,8 @@ export class OrderStore {
   // Get current Order for a user
   currentOrderByUserId = async (userId: string): Promise<Order> => {
     try {
-      const sql = 'SELECT * FROM orders WHERE status=active AND id=($1)'
+      const sql =
+        "SELECT * FROM orders WHERE (user_id=($1) AND status='active')"
       const conn = await Client.connect()
 
       const result = await conn.query(sql, [userId])

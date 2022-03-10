@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 //@TODO add tests
 
 export type User = {
-  id?: number
+  id?: number | string
   first_name: string
   last_name: string
   password: string
@@ -25,7 +25,7 @@ export class UserStore {
     }
   }
 
-  show = async (id: string): Promise<User[]> => {
+  show = async (id: string): Promise<User> => {
     const sql = 'SELECT * FROM users WHERE id=($1)'
     try {
       const conn = await Client.connect()
