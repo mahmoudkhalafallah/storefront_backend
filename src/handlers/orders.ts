@@ -51,8 +51,8 @@ const create = async (req: Request, res: Response) => {
 }
 
 const orderRoutes = (app: express.Application) => {
-  app.get('/orders', index)
-  app.get('/orders/:id', show)
+  app.get('/orders', verifyAuthToken, index)
+  app.get('/orders/:id', verifyAuthToken, show)
   app.get('/orders/users/:id', verifyAuthToken, showCurrentOrder)
   app.post('/orders', verifyAuthToken, create)
 }

@@ -1,42 +1,45 @@
 import supertest from 'supertest'
-import jwt, { JwtPayload } from 'jsonwebtoken'
 import app from '../../server'
 
-describe('POST /orders', () => {
-  it('should create a new order and respond with the newly created order', async () => {
+let token: string
+
+describe('POST /products', () => {
+  it('should create a new product and respond with the newly created product', async () => {
     const request = await supertest(app)
 
-    const {
-      body: { token },
-    } = await request.post('/users').send({
+    const { body } = await request.post('/users').send({
       firstName: 'test',
       lastName: 'user',
       password: '123',
     })
 
-    const { user } = jwt.decode(token) as JwtPayload
+    token = body.token
 
     const res = await request
-      .post('/orders')
+      .post('/products')
       .set('Authorization', 'Bearer ' + token)
       .send({
-        status: 'active',
-        userId: user.id,
+        name: 'apple',
+        price: 100,
+        category: 'fruits',
       })
 
     expect(res.headers['content-type']).toMatch(/json/)
     expect(res.status).toEqual(200)
     expect(res.body.id).toBeDefined()
-    expect(+res.body.user_id).toEqual(user.id)
-    expect(res.body.status).toEqual('active')
+    expect(res.body.name).toEqual('apple')
+    expect(res.body.price).toEqual(100)
+    expect(res.body.category).toEqual('fruits')
   })
 })
 
-describe('GET /orders', () => {
-  it('should get all orders', async () => {
+describe('GET /products', () => {
+  it('should get all products', async () => {
     const request = await supertest(app)
 
-    const res = await request.get('/orders')
+    const res = await request
+      .get('/products')
+      .set('Authorization', 'Bearer ' + token)
 
     expect(res.headers['content-type']).toMatch(/json/)
     expect(res.status).toEqual(200)
@@ -44,11 +47,13 @@ describe('GET /orders', () => {
   })
 })
 
-describe('GET /orders/:id', () => {
-  it('should get order by id', async () => {
+describe('GET /products/:id', () => {
+  it('should get product by id', async () => {
     const request = await supertest(app)
 
-    const res = await request.get('/orders/1')
+    const res = await request
+      .get('/products/1')
+      .set('Authorization', 'Bearer ' + token)
 
     expect(res.headers['content-type']).toMatch(/json/)
     expect(res.status).toEqual(200)
