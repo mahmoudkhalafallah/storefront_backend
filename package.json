@@ -4,11 +4,11 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "start": "yarn build && node dist/server.js",
+    "start": "yarn && yarn build && node dist/server.js",
     "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess \"node ./dist/server.js\"",
     "test": "ENV=test db-migrate --env test up && ENV=test jasmine-ts && ENV=test db-migrate --env test reset",
-    "db:up":"db-migrate up",
-    "db:rest":"db-migrate rest",
+    "db:up": "db-migrate up",
+    "db:rest": "db-migrate rest",
     "build": "tsc -b",
     "lint": "eslint --fix src/**.ts && prettier --write **.ts"
   },
